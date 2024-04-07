@@ -55,9 +55,12 @@ CP = cp
 MKDIR = mkdir -p
 
 install:
+	$(MKDIR) $(LIBDIR)
 	$(CP) lib/libopenctm.so $(LIBDIR)
+	$(MKDIR) $(INCDIR)
 	$(CP) lib/openctm.h $(INCDIR)
 	$(CP) lib/openctmpp.h $(INCDIR)
+	$(MKDIR) $(BINDIR)
 	$(CP) tools/ctmconv $(BINDIR)
 	$(CP) tools/ctmviewer $(BINDIR)
 	$(MKDIR) $(MAN1DIR)
