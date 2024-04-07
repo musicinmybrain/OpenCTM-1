@@ -57,7 +57,7 @@ MKDIR = mkdir -p
 
 install:
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
-	$(CP) lib/libopenctm.so $(DESTDIR)$(LIBDIR)
+	$(CP) -P lib/libopenctm.so* $(DESTDIR)$(LIBDIR)
 	$(MKDIR) $(DESTDIR)$(INCDIR)
 	$(CP) lib/openctm.h $(DESTDIR)$(INCDIR)
 	$(CP) lib/openctmpp.h $(DESTDIR)$(INCDIR)

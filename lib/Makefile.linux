@@ -33,7 +33,11 @@ CFLAGS_LZMA = -O3 -W -Wall -c -fPIC -DLZMA_PREFIX_CTM -std=c99 -pedantic
 RM = rm -f
 DEPEND = $(CPP) -MM
 
-DYNAMICLIB = libopenctm.so
+# Increment whenever there is a backwards-incompatible ABI change
+ABI_VERSION = 1
+
+DYNAMICLIB = libopenctm.so.$(ABI_VERSION)
+DYNAMICLIBLINK = libopenctm.so
 
 OBJS = openctm.o \
        stream.o \
@@ -61,13 +65,16 @@ LZMA_SRCS = $(LZMADIR)/Alloc.c \
 
 .phony: all clean depend
 
-all: $(DYNAMICLIB)
+all: $(DYNAMICLIB) $(DYNAMICLIBLINK)
 
 clean:
-	$(RM) $(DYNAMICLIB) $(OBJS) $(LZMA_OBJS)
+	$(RM) $(DYNAMICLIB) $(DYNAMICLIBLINK) $(OBJS) $(LZMA_OBJS)
 
 $(DYNAMICLIB): $(OBJS) $(LZMA_OBJS)
 	gcc -shared -s -Wl,-soname,$@ -o $@ $(OBJS) $(LZMA_OBJS) -lm
+
+$(DYNAMICLIBLINK): $(DYNAMICLIB)
+	ln -s -f $< $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $<
