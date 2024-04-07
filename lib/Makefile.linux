@@ -30,6 +30,8 @@ LZMADIR = liblzma
 CC = gcc
 CFLAGS = -O3 -W -Wall -c -fPIC -DOPENCTM_BUILD -I$(LZMADIR) -DLZMA_PREFIX_CTM -std=c99 -pedantic
 CFLAGS_LZMA = -O3 -W -Wall -c -fPIC -DLZMA_PREFIX_CTM -std=c99 -pedantic
+LDFLAGS = -s
+DYNAMICLIBLDFLAGS = -lm $(LDFLAGS)
 RM = rm -f
 DEPEND = $(CPP) -MM
 
@@ -71,7 +73,7 @@ clean:
 	$(RM) $(DYNAMICLIB) $(DYNAMICLIBLINK) $(OBJS) $(LZMA_OBJS)
 
 $(DYNAMICLIB): $(OBJS) $(LZMA_OBJS)
-	gcc -shared -s -Wl,-soname,$@ -o $@ $(OBJS) $(LZMA_OBJS) -lm
+	gcc -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LZMA_OBJS) $(DYNAMICLIBLDFLAGS)
 
 $(DYNAMICLIBLINK): $(DYNAMICLIB)
 	ln -s -f $< $@

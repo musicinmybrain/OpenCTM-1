@@ -36,6 +36,15 @@ PNGLITEDIR = pnglite
 CPP = g++
 CPPFLAGS = -c -O3 -W -Wall `pkg-config --cflags gtk+-2.0` -I$(OPENCTMDIR) -I$(RPLYDIR) -I$(JPEGDIR) -I$(TINYXMLDIR) -I$(GLEWDIR) -I$(ZLIBDIR) -I$(PNGLITEDIR)
 
+LDFLAGS = -Wl,-rpath,.
+CTMCONVLDFLAGS = -L$(OPENCTMDIR) -L$(TINYXMLDIR)
+CTMVIEWERLDFLAGS = -L$(OPENCTMDIR) -L$(TINYXMLDIR) -L$(JPEGDIR) -L$(ZLIBDIR)
+CTMBENCHLDFLAGS = -L$(OPENCTMDIR)
+
+CTMCONVLIBS = -lopenctm -ltinyxml
+CTMVIEWERLIBS = -lopenctm -ltinyxml -ljpeg -lz -lglut `pkg-config --libs gtk+-2.0`
+CTMBENCHLIBS = -lopenctm
+
 MESHOBJS = mesh.o meshio.o ctm.o ply.o rply.o stl.o 3ds.o dae.o obj.o lwo.o off.o wrl.o
 CTMCONVOBJS = ctmconv.o common.o systimer.o convoptions.o $(MESHOBJS)
 CTMVIEWEROBJS = ctmviewer.o common.o image.o systimer.o sysdialog_gtk.o convoptions.o glew.o pnglite.o $(MESHOBJS)
@@ -53,13 +62,13 @@ libopenctm.so: $(OPENCTMDIR)/libopenctm.so
 	cp $< $@
 
 ctmconv: $(CTMCONVOBJS) $(TINYXMLDIR)/libtinyxml.a libopenctm.so
-	$(CPP) -s -o $@ -L$(OPENCTMDIR) -L$(TINYXMLDIR) $(CTMCONVOBJS) -Wl,-rpath,. -lopenctm -ltinyxml
+	$(CPP) -s -o $@ $(CTMCONVLDFLAGS) $(CTMCONVOBJS) $(LDFLAGS) $(CTMCONVLIBS)
 
 ctmviewer: $(CTMVIEWEROBJS) $(JPEGDIR)/libjpeg.a $(TINYXMLDIR)/libtinyxml.a $(ZLIBDIR)/libz.a libopenctm.so
-	$(CPP) -s -o $@ -L$(OPENCTMDIR) -L$(TINYXMLDIR) -L$(JPEGDIR) -L$(ZLIBDIR) $(CTMVIEWEROBJS) -Wl,-rpath,. -lopenctm -ltinyxml -ljpeg -lz -lglut `pkg-config --libs gtk+-2.0`
+	$(CPP) -s -o $@ $(CTMVIEWERLDFLAGS) $(CTMVIEWEROBJS) $(LDFLAGS) $(CTMVIEWERLIBS)
 
 ctmbench: $(CTMBENCHOBJS) libopenctm.so
-	$(CPP) -s -o $@ -L$(OPENCTMDIR) $(CTMBENCHOBJS) -Wl,-rpath,. -lopenctm
+	$(CPP) -s -o $@ $(CTMBENCHLDFLAGS) $(CTMBENCHOBJS) $(LDFLAGS) $(CTMBENCHLIBS)
 
 %.o: %.cpp
 	$(CPP) $(CPPFLAGS) -o $@ $<
