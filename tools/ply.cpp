@@ -167,7 +167,7 @@ void Import_PLY(const char * aFileName, Mesh * aMesh)
   state.mColorIdx = 0;
 
   // Open the PLY file
-  p_ply ply = ply_open(aFileName, NULL);
+  p_ply ply = ply_open(aFileName, NULL, 0, NULL);
   if(!ply)
     throw runtime_error("Unable to open PLY file.");
   if(!ply_read_header(ply))
